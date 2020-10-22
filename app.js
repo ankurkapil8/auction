@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 var jwt = require('jsonwebtoken'); // JWT token
 const app = express();
 app.set('superSecret', "auction");
-app.listen(3000, () => {
+var PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
   console.log("Server running on port 3000");
 });
 
