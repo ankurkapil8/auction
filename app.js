@@ -26,6 +26,28 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 var users = [];
 var auctionData = [];
+var myBid = [
+    {
+        auctionName:"auction1",
+        price:"30",
+        time:"14:30",
+        isbest:"Yes"
+    },
+    {
+        auctionName:"auction2",
+        price:"40",
+        time:"15:30",
+        isbest:"No"
+    },
+    {
+        auctionName:"auction2",
+        price:"50",
+        time:"16:00",
+        isbest:"Yes"
+    }
+
+
+];
 // registration api
 app.post("/registration", (req, res, next) => {         // registration API
     try {
@@ -192,6 +214,43 @@ app.get('/auction',(req,res,next)=>{
           });
     }
 })
+
+// my bid list
+app.get('/mybid',(req,res,next)=>{
+    try{
+        return res.status(200).json({
+            record:myBid
+        });            
+    }catch (error) {
+        return res.status(500).json({
+            message: error.message
+          });
+    }
+})
+
+// delete my bid
+app.delete('/mybid',(req,res,next)=>{
+    try{
+        if(req.query.index == "" || req.query.index == undefined){
+            return res.status(500).json({
+                message: "index required in query string"
+            });            
+        }
+        myBid.splice(req.query.index, 1);
+
+        return res.status(200).json({
+            message: "record deleted successfully",
+            record:myBid
+        });            
+
+    }catch (error) {
+        return res.status(500).json({
+            message: error.message
+          });
+    }
+})
+
+
 app.use("/",(req,res,next)=>{
     return res.status(200).json("Welcome to auction website");            
 })
