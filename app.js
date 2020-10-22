@@ -1,6 +1,7 @@
 var express = require("express"); // call express framework
 const bodyParser = require('body-parser'); 
 var jwt = require('jsonwebtoken'); // JWT token
+const e = require("express");
 const app = express();
 app.set('superSecret', "auction");
 var PORT = process.env.PORT || 3000;
@@ -205,8 +206,18 @@ app.post('/auction',(req,res,next)=>{
     // list of auction
 app.get('/auction',(req,res,next)=>{
     try{
+        let data = [];
+        if(req.query.name !="" && req.query.name !=undefined){
+            auctionData.forEach(record=>{
+                if(record.name ==req.query.name ){
+                    data.push(record);
+                }
+            })
+        }else{
+            data = auctionData;
+        }
         return res.status(200).json({
-            record:auctionData
+            record:data
         });            
     }catch (error) {
         return res.status(500).json({
