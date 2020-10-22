@@ -192,3 +192,6 @@ app.get('/auction',(req,res,next)=>{
           });
     }
 })
+app.use("/",(req,res,next)=>{
+    return res.status(200).json("Welcome to auction website");            
+})
