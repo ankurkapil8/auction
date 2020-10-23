@@ -122,8 +122,8 @@ app.post('/auction', (req, res, next) => {
         //console.log(req.headers.token);
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         console.log(decoded)
-        auctionData.push(req.body);
         if (decoded.username == "admin") {
+            auctionData.push(req.body);
             return res.status(200).json({
                 message: "auction created successfully",
                 record: auctionData
@@ -269,7 +269,6 @@ app.delete('/mybid', (req, res, next) => {
         myBid.splice(bidIndex, 1);
         return res.status(200).json({
             message: "record deleted successfully",
-            record: myBid
         });
 
     } catch (error) {
@@ -320,6 +319,7 @@ app.get("/auctionList",(req,res,next)=>{
     });
 
 })
+
 //function for get auction detail with bided details
 app.get("/auctionDetails",(req,res,next)=>{
     if (req.query.auctionName == "" || req.query.auctionName == undefined) {
@@ -334,17 +334,55 @@ app.get("/auctionDetails",(req,res,next)=>{
     var auctionObj = auctionData.filter(record=>record.name==req.query.auctionName);
     auctionDataWithBid.auctionDetails = auctionObj;
     var bidDetails = [];
-    bidDetails.push(myBid.filter(record=>record.auctionObj.name == req.query.auctionName));
-    auctionDataWithBid.bidDetails.push(bidDetails);
+    console.log(myBid);
+    myBid.forEach(bidData=>{
+        bidData.auctionObj.forEach(auction=>{
+            if(auction.name == req.query.auctionName){
+                bidDetails.push(bidData);
+            }
+        })
+    })
+    auctionDataWithBid.bidDetails = bidDetails;
     return res.status(200).json({
         record: auctionDataWithBid
     });
 })
 
 app.get("/filterAuction",(req,res,next)=>{
+    var returnData = [];
+    var searchPrms = {
+        auctionName:"",
+        amount:""
+    }
+
+    if(req.query.auctionName !="" && req.query.auctionName != undefined){
+        searchPrms.auctionName = req.query.auctionName
+    }
+    if(req.query.amount !="" && req.query.amount != undefined){
+        searchPrms.amount = req.query.amount
+    }
     
+    auctionData.forEach(record=>{
+        if(searchPrms.auctionName != "" && searchPrms.amount != ""){
+            if(searchPrms.auctionName == record.name && searchPrms.amount == record.amount){
+                returnData.push(record);
+            }
+        }else if(searchPrms.auctionName != ""){
+            if(searchPrms.auctionName == record.name){
+                returnData.push(record);
+            }
+
+        }else if(searchPrms.auctionName != ""){
+            if(searchPrms.amount == record.amount){
+                returnData.push(record);
+            }
+        }
+        });
+    //});
+    return res.status(200).json({
+        record: returnData
+    });
 })
-//app.get("/")
 app.use("/", (req, res, next) => {
     return res.status(200).json("Welcome to auction website");
 })
