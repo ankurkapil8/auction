@@ -306,7 +306,7 @@ app.post("/placebid", (req, res, next) => {
     }
     bidObj.auctionObj = auctionDetail;
     myBid.push(bidObj);
-    return res.status(500).json({
+    return res.status(200).json({
         message: "bid Placed successfully",
         record:bidObj
     });
