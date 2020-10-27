@@ -179,16 +179,16 @@ app.put('/auction', (req, res, next) => {
 //delete auction (Admin)
 app.delete('/auction', (req, res, next) => {
     try {
-        if (req.query.name == "" || req.query.name == undefined) {
+        if (req.body.name == "" || req.body.name == undefined) {
             return res.status(500).json({
-                message: "name required in query string"
+                message: "name required "
             });
         }
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         if (decoded.username == "admin") {
 
             auctionData.forEach((record, index) => {
-                if (record.name == req.query.name) {
+                if (record.name == req.body.name) {
                     console.log(index);
                     auctionData.splice(index, 1);
                 }
