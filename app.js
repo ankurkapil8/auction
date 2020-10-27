@@ -240,9 +240,9 @@ app.get('/mybid', (req, res, next) => {
         var myBids = [];
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         var bidObj = myBid.filter(record=>record.username==decoded.username);
-        myBids.push(bidObj);
+        //myBids.push(bidObj);
         return res.status(200).json({
-            record: myBids
+            record: bidObj
         });
     } catch (error) {
         return res.status(500).json({
