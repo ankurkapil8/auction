@@ -255,14 +255,14 @@ app.get('/mybid', (req, res, next) => {
 app.delete('/mybid', (req, res, next) => {
     try {
         var bidIndex = -1;
-        if (req.query.auctionName == "" || req.query.auctionName == undefined) {
+        if (req.body.auctionName == "" || req.body.auctionName == undefined) {
             return res.status(500).json({
                 message: "auctionName required in query string"
             });
         }
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         myBid.forEach((record,index) => {
-            if (record.auctionObj.name == req.query.auctionName && record.username == decoded.username) {
+            if (record.auctionObj.name == req.body.auctionName && record.username == decoded.username) {
                 bidIndex = index;
             }
         })
