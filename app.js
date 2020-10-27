@@ -279,37 +279,44 @@ app.delete('/mybid', (req, res, next) => {
 })
 // function for place new bid
 app.post("/placebid", (req, res, next) => {
-    var bidObj = {
-        username:"",
-        bidAmount:"",
-        isBest:"yes",
-        auctionObj:{}
-    }
-    if (req.body.auctionName == "" || req.body.auctionName == undefined) {
+    try {
+        var bidObj = {
+            username:"",
+            bidAmount:"",
+            isBest:"yes",
+            auctionObj:{}
+        }
+        if (req.body.auctionName == "" || req.body.auctionName == undefined) {
+            return res.status(500).json({
+                message: "auction name required"
+            });
+        }
+        if (req.body.bidAmount == "" || req.body.bidAmount == undefined) {
+            return res.status(500).json({
+                message: "Bid amount required"
+            });
+        }
+        var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
+        bidObj.username = decoded.username;
+        bidObj.bidAmount = req.body.bidAmount;
+        var auctionDetail = auctionData.filter(record=>record.name==req.body.auctionName);
+        if(auctionDetail == "" || auctionDetail==null || auctionDetail ==undefined){
+            return res.status(500).json({
+                message: "auction not available"
+            });
+        }
+        bidObj.auctionObj = auctionDetail;
+        myBid.push(bidObj);
+        return res.status(200).json({
+            message: "bid Placed successfully",
+            record:bidObj
+        });
+            
+    } catch (err) {
         return res.status(500).json({
-            message: "auction name required"
+            message: err.message
         });
     }
-    if (req.body.bidAmount == "" || req.body.bidAmount == undefined) {
-        return res.status(500).json({
-            message: "Bid amount required"
-        });
-    }
-    var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
-    bidObj.username = decoded.username;
-    bidObj.bidAmount = req.body.bidAmount;
-    var auctionDetail = auctionData.filter(record=>record.name==req.body.auctionName);
-    if(auctionDetail == "" || auctionDetail==null || auctionDetail ==undefined){
-        return res.status(500).json({
-            message: "auction not available"
-        });
-    }
-    bidObj.auctionObj = auctionDetail;
-    myBid.push(bidObj);
-    return res.status(200).json({
-        message: "bid Placed successfully",
-        record:bidObj
-    });
 });
 
 // function for get list of auction for home page
