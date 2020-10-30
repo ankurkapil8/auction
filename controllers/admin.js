@@ -147,7 +147,7 @@ router.get('/auction', (req, res, next) => {
         });
     }
 })
-app.get("/auctionList",(req,res,next)=>{
+router.get("/auctionList",(req,res,next)=>{
     auctionData = service.getAuction();
     return res.status(200).json({
         record: auctionData
@@ -156,7 +156,7 @@ app.get("/auctionList",(req,res,next)=>{
 })
 
 //function for get auction detail with bided details
-app.get("/auctionDetails",(req,res,next)=>{
+router.get("/auctionDetails",(req,res,next)=>{
     if (req.query.auctionName == "" || req.query.auctionName == undefined) {
         return res.status(500).json({
             message: "auction name required in query string"
@@ -186,7 +186,7 @@ app.get("/auctionDetails",(req,res,next)=>{
     });
 })
 
-app.get("/filterAuction",(req,res,next)=>{
+router.get("/filterAuction",(req,res,next)=>{
     var returnData = [];
     var searchPrms = {
         auctionName:"",
