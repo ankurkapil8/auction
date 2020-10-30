@@ -33,6 +33,7 @@ router.post('/auction', (req, res, next) => {
         console.log(decoded)
         if (decoded.username == "admin") {
             service.setAuction(req.body);
+            var auctionData = service.getAuction();
             //auctionData.push(req.body);
             return res.status(200).json({
                 message: "auction created successfully",
