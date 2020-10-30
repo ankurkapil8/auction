@@ -13,6 +13,8 @@ app.set('superSecret', "auction");
 router.get('/mybid', (req, res, next) => {
     try {
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
+        var myBid = service.getBid();
+
         var bidObj = myBid.filter(record=>record.username==decoded.username);
         //myBids.push(bidObj);
         return res.status(200).json({
@@ -35,12 +37,15 @@ router.delete('/mybid', (req, res, next) => {
             });
         }
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
+        var myBid = service.getBid();
+
         myBid.forEach((record,index) => {
             if (record.auctionObj.name == req.body.auctionName && record.username == decoded.username) {
                 bidIndex = index;
             }
         })
         myBid.splice(bidIndex, 1);
+        service.deleteBid(myBid);
         return res.status(200).json({
             message: "record deleted successfully",
         });
@@ -73,6 +78,8 @@ router.post("/placebid", (req, res, next) => {
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         bidObj.username = decoded.username;
         bidObj.bidAmount = req.body.bidAmount;
+        var auctionData = service.getAuction();
+
         var auctionDetail = auctionData.filter(record=>record.name==req.body.auctionName);
         if(auctionDetail == "" || auctionDetail==null || auctionDetail ==undefined){
             return res.status(500).json({
@@ -80,7 +87,8 @@ router.post("/placebid", (req, res, next) => {
             });
         }
         bidObj.auctionObj = auctionDetail;
-        myBid.push(bidObj);
+        //myBid.push(bidObj);
+        service.setBid(bidObj);
         return res.status(200).json({
             message: "bid Placed successfully",
             record:bidObj

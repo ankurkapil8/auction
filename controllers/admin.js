@@ -30,11 +30,9 @@ router.post('/auction', (req, res, next) => {
         }
         //console.log(req.headers.token);
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
-        console.log(decoded)
         if (decoded.username == "admin") {
             service.setAuction(req.body);
             var auctionData = service.getAuction();
-            //auctionData.push(req.body);
             return res.status(200).json({
                 message: "auction created successfully",
                 record: auctionData
@@ -63,6 +61,7 @@ router.put('/auction', (req, res, next) => {
         }
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         if (decoded.username == "admin") {
+            auctionData = service.getAuction();
             auctionData.forEach((record, index) => {
                 if (record.name == req.query.name) {
                     auctionData[index].description = req.body.description;
@@ -98,7 +97,7 @@ router.delete('/auction', (req, res, next) => {
         }
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         if (decoded.username == "admin") {
-
+            auctionData = service.getAuction();
             auctionData.forEach((record, index) => {
                 if (record.name == req.body.name) {
                     console.log(index);
@@ -132,6 +131,7 @@ router.get('/auction', (req, res, next) => {
         let data = [];
         var decoded = jwt.verify(req.headers.token, app.get('superSecret'));
         if(decoded.username == "admin"){
+            auctionData = service.getAuction();
             data = auctionData;
             return res.status(200).json({
                 record: data
@@ -148,6 +148,7 @@ router.get('/auction', (req, res, next) => {
     }
 })
 app.get("/auctionList",(req,res,next)=>{
+    auctionData = service.getAuction();
     return res.status(200).json({
         record: auctionData
     });
@@ -165,9 +166,12 @@ app.get("/auctionDetails",(req,res,next)=>{
         auctionDetails:{},
         bidDetails:[]
     };
+    auctionData = service.getAuction();
+
     var auctionObj = auctionData.filter(record=>record.name==req.query.auctionName);
     auctionDataWithBid.auctionDetails = auctionObj;
     var bidDetails = [];
+    myBid = service.getBid();
     console.log(myBid);
     myBid.forEach(bidData=>{
         bidData.auctionObj.forEach(auction=>{
@@ -195,7 +199,7 @@ app.get("/filterAuction",(req,res,next)=>{
     if(req.query.amount !="" && req.query.amount != undefined){
         searchPrms.amount = req.query.amount
     }
-    
+    auctionData = service.getAuction();
     auctionData.forEach(record=>{
         if(searchPrms.auctionName != "" && searchPrms.amount != ""){
             if(searchPrms.auctionName == record.name && searchPrms.amount == record.amount){

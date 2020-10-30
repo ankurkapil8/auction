@@ -20,6 +20,9 @@ module.exports = {
     setBid:function(obj){
         myBid.push(obj);
     },
+    deleteBid:function(bid){
+        myBid = [...bid]
+    },
     getAuction: function(){
         return auctionData;
     },
